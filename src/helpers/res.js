@@ -6,16 +6,27 @@ module.exports = {
         result.statusCode = statusCode|| 200;
 
         if(result.data.affectedRows <= 0){
-            const  kode = "error id not found"
+            const  msg = "Error id is not found"
             return res.status(200).json({
                 success : false,
-                data : kode
+                msg : msg
             });
         }
-
-        return res.status(result.statusCode).json({
-            success : result.status,
-            data : result.data
-        });
+        else{
+            if(result.status == false) {
+                return res.status(result.statusCode).json({
+                    success : result.status,
+                    msg : result.data.sqlMessage || result.data.details[0].message
+                });
+            }
+            else{
+                return res.status(result.statusCode).json({
+                    success : result.status,
+                    msg : result.data.msg,
+                    data : result.data.data,
+                    pageInfo : result.data.pageInfo
+                });
+            }
+        }
     }
 }

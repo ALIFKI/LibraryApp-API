@@ -22,8 +22,8 @@ module.exports = {
                         resolve(result)
                     }
                     const newRes = {
-                        msg : 'Data Has been Inserted!',
-                        ...setData
+                        msg : 'Book Has been Inserted!',
+                        data : setData
                     }
                     resolve(newRes)
                 }
@@ -57,24 +57,37 @@ module.exports = {
                         resolve(result)
                     }
                     const newRes = {
-                        msg : 'Data Has been Change!',
-                        ...setData
-                    }
+                        msg : 'Book Has been Change!',
+                        data : setData
+                         }
                     resolve(newRes)
                 }
             })
         })
     },
-    indexSearch : function(rule) {
+    
+    indexSearch : function(startAt,endAt,rule) {
         return new Promise((resolve,reject)=>{
-            console.log(rule.search)
-            connection.query("SELECT * FROM books WHERE title LIKE ? ORDER BY created_at DESC",rule.search+'%',function (error,result) {
+            connection.query(`SELECT * FROM books WHERE title LIKE ? ORDER BY title ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,['%'+rule.search+'%',endAt,startAt],function (error,result) {
                 if (error) {
                     reject(error)
                 }
-                resolve(result)
+                const resData = {
+                    msg : "List Books",
+                    data : result
+                }
+                resolve(resData)
             })
         })
-        
+    },
+    getCount : function () {
+        return new Promise((resolve,reject)=>{
+            connection.query("SELECT COUNT(*) as total FROM books",function(error,result) {
+                if (error) {
+                    reject(error)
+                }         
+                resolve(result[0].total)       
+            })
+        })
     }
 }

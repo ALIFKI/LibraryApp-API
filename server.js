@@ -6,12 +6,22 @@ const app = express();
 var config = require('./src/config/global')
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/index')
+const cors = require("cors")
+var whitelist = ['http://example2.com','http://localhost:8100','*','http://localhost:3000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 
+app.use(cors())
 app.use('/uploads',express.static('./uploads'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
 app.use(morgan('dev'))
 
 app.use('/',routes)
