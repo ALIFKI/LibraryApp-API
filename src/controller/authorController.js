@@ -83,7 +83,8 @@ module.exports = {
         const query = request.query;
         const rule = {
             search : query.search,
-            sort   : query.sort 
+            sort   : query.sort,
+            by : query.by 
         }
         const totalPage = Math.ceil(await author.getCount()/getPage(query.limit))
         const current_page = query.page

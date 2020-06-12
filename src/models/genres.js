@@ -7,7 +7,7 @@ const moment = require('moment')
 module.exports = {
     index : function (startAt,endAt,rule) {
         return new Promise((resolve,reject)=>{
-            connection.query(`SELECT * FROM genres WHERE genre LIKE ? ORDER BY genre ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,['%'+rule.search+'%',endAt,startAt],function (error,result) {
+            connection.query(`SELECT * FROM genres WHERE ${rule.by} LIKE ? ORDER BY ${rule.by} ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,['%'+rule.search+'%',endAt,startAt],function (error,result) {
                 if (error) {
                     reject(error)
                 }

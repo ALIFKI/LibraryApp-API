@@ -74,8 +74,8 @@ const goLastPage = (_page,_totalPage,_current)=>{
 
 const genreSchema = Joi.object({
     genre : Joi.string()
-    .alphanum()
-    .required()
+    .required(),
+    updated_at : Joi.date()
 })
 
 
@@ -84,7 +84,8 @@ module.exports = {
         const query = request.query
         const rule = {
             search : query.search,
-            sort   : query.sort
+            sort   : query.sort,
+            by : query.by
         }
         const totalPage = Math.ceil(await genre.getCount()/getPage(query.limit))
         const current_page = query.page

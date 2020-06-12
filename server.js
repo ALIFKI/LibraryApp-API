@@ -6,10 +6,12 @@ const app = express();
 var config = require('./src/config/global')
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/index')
+const session = require('express-session')
 const cors = require("cors")
 var whitelist = ['http://example2.com','http://localhost:8100','*','http://localhost:3000']
 var corsOptions = {
   origin: function (origin, callback) {
+    if(!origin) return callback(null, true);
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
@@ -18,7 +20,7 @@ var corsOptions = {
   }
 }
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use('/uploads',express.static('./uploads'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

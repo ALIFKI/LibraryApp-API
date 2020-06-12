@@ -14,7 +14,7 @@ module.exports ={
     },
     index : function (startAt,endAt,rule) {
         return new Promise((resolve,reject)=>{ 
-            connection.query(`SELECT * FROM authors WHERE author_name LIKE ? ORDER BY author_name ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,['%'+rule.search+'%',endAt,startAt],function(error,result){
+            connection.query(`SELECT * FROM authors WHERE ${rule.by} LIKE ? ORDER BY ${rule.by} ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,['%'+rule.search+'%',endAt,startAt],function(error,result){
                 if (error) {
                     reject(error)
                 }

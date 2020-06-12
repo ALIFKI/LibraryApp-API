@@ -12,7 +12,9 @@ const storage = multer.diskStorage({
         cb(null,'./uploads')
     },
     filename : function (req,file,cb) {
-        cb(null,new Date().toISOString().replace(/:/g, '-') + file.originalname)
+        const number = (Math.random() + '').substring(2,10)
+        + (Math.random() + '').substring(2,10);
+        cb(null,number +'_'+ file.originalname)
     }
 })
 const upload = multer({storage : storage})

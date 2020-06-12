@@ -108,7 +108,9 @@ module.exports = {
                 const query = request.query;
                 const rule = {
                     search : query.search,
-                    sort   : query.sort 
+                    sort   : query.sort,
+                    by : query.by,
+                    order : query.order
                 }
                 const totalPage = Math.ceil(await books.getCount()/getPage(query.limit))
                 const current_page = query.page
@@ -135,7 +137,9 @@ module.exports = {
     },
     postAddBook : async function(request,response){
         const setData = request.body
-        setData.image = request.file.path
+        if(request.file){
+            setData.image = request.file.filename
+        }
         try {
             await booksSchema.validateAsync(setData)
             const result = await books.store(setData);
@@ -158,7 +162,7 @@ module.exports = {
         setData.updated_at = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
         const id = request.params.id
         if(request.file){
-            setData.image = request.file.path
+            setData.image = request.file.filename
         }
         try {
             await booksSchemaUpdate.validateAsync(setData)
