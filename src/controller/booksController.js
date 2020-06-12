@@ -6,6 +6,7 @@ const path     = require('path');
 const moment = require('moment')
 const queryString = require('querystring')
 const Joi = require('@hapi/joi');
+const fs = require('../helpers/fs')
 
 const getPage = (_page) =>{
     var page = parseInt(_page)
@@ -151,6 +152,11 @@ module.exports = {
     deleteBook : async function(request,response){
         const id = request.params.id
         try {
+            const get = await books.getDetails(id)
+            const data = {
+                ...get[0]
+            }
+            fs.delete('uploads/'+data.image)
             const result = await books.destroy(id)
             return helper.response(response,'success',result,200)
         } catch (error) {
@@ -166,6 +172,13 @@ module.exports = {
         }
         try {
             await booksSchemaUpdate.validateAsync(setData)
+            if(request.file){
+                const get = await books.getDetails(id)
+                const data = {
+                    ...get[0]
+                }
+                fs.delete('uploads/'+data.image)
+            }
             const result = await books.edit(setData,id);
             return helper.response(response,'success',result,200)
         } catch (error) {

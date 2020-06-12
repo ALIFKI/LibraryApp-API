@@ -89,5 +89,15 @@ module.exports = {
                 resolve(result[0].total)       
             })
         })
+    },
+    getDetails : function (id) {
+        return new Promise((resolve,reject)=>{
+            connection.query("SELECT * FROM books WHERE id= ?",id,function(error,result) {
+                if (error) {
+                    reject(error)
+                }       
+                resolve(result)       
+            })
+        })
     }
 }
