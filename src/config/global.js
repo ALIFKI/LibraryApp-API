@@ -6,7 +6,8 @@ const config = {
         database : process.env.MYSQL_DB
     },
     app : {
-        port : process.env.PORT
+        port : process.env.PORT,
+        secret_key : process.env.SERCERT_KEY
     }
 
 }

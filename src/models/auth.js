@@ -19,7 +19,14 @@ module.exports = {
         });
         
     },
-    login : function () {
-        
+    login : function (email) {
+        return new Promise((resolve,reject)=>{
+            connection.query("SELECT * FROM users WHERE email= ?",email,function (error,result) {
+                if (error) {
+                    reject(error)
+                }
+                resolve(result)
+            })
+        })
     }
 }

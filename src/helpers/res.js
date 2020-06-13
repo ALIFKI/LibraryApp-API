@@ -14,9 +14,17 @@ module.exports = {
         }
         else{
             if(result.status == false) {
+                let message = '';
+                if(result.data.details ){
+                    const message = result.data.details[0].message
+                    return res.status(result.statusCode).json({
+                        success : result.status,
+                        msg : message
+                    }); 
+                }
                 return res.status(result.statusCode).json({
                     success : result.status,
-                    msg : result.data.sqlMessage || result.data.details[0].message
+                    msg : result.data.sqlMessage || result.data.msg|| message
                 });
             }
             else{
