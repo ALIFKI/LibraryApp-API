@@ -1,15 +1,11 @@
-const connection = require('../helpers/mysql')
 const helper = require('../helpers/res')
-const multer = require('multer');
-const path   = require('path');
-const queryString = require('querystring')
-const moment = require('moment');
 const Joi = require('@hapi/joi');
 const HasPass = require('bcrypt')
 const auth = require('../models/auth')
 const jwt = require('jsonwebtoken')
 const config = require('../config/global')
 const secretPas = require('../helpers/bcrypt')
+const tokenList = {}
 
 const credentialsRegister = Joi.object({
     name : Joi.string().required(),
@@ -51,12 +47,14 @@ module.exports = {
                        data : result[0]
                     }
                     const token = jwt.sign(User, config.app.secret_key, { expiresIn: '100m' });
+                    const refreshToken = jwt.sign(User,config.app.secret_key,{expiresIn : '7d'})
                     result[0].token = token;
-                    console.log(result)
+                    result[0].refreshToken = refreshToken;
                     const newRes = {
                         msg : "Login Success!",
                         data : result 
                     }
+                    tokenList[refreshToken] = newRes
                     return helper.response(response, 'success',newRes, 200);            
                 }
                 const failedRes = {
@@ -72,6 +70,32 @@ module.exports = {
         } catch (error) {
             console.log(error);
             return helper.response(response, 'fail', error.msg='Internet Server Error', 500);
+        }
+    },
+    refreshToken : async function (request,response) {
+        try {
+            if (request.headers.refreshtoken) {
+                const userCredentials = jwt.verify(request.headers.refreshtoken, config.app.secret_key);
+                delete userCredentials.exp
+                const token = jwt.sign(userCredentials, config.app.secret_key, { expiresIn: '100m' });
+                const refreshToken = jwt.sign(userCredentials,config.app.secret_key,{expiresIn : '7d'})
+                const newRes = {
+                    msg : "Refresh Success!",
+                    data : {
+                        token : token,
+                        refreshToken : refreshToken 
+                    }
+                }
+                return helper.response(response, 'success',newRes, 200);
+            }else{
+                const newRes = {
+                    msg : "No Refresh token provided.",
+                }
+                return helper.response(response, 'fail',newRes, 500);
+            }
+            
+        } catch (error) {
+            return helper.response(response, 'fail',error, 200);
         }
     }
 }
