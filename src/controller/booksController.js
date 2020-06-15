@@ -185,4 +185,14 @@ module.exports = {
             return helper.response(response,'fail',error,500)
         }
     },
+
+    getDetails : async function (request,response) {
+        const id = request.params.id
+        try {
+            const result = await books.getDetails(id);
+            return helper.response(response,'success',result,200)
+        } catch (error) {
+            return helper.response(response,'fails',error,500)
+        }
+    }
 }

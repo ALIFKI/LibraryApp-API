@@ -77,6 +77,7 @@ module.exports = {
             if (request.headers.refreshtoken) {
                 const userCredentials = jwt.verify(request.headers.refreshtoken, config.app.secret_key);
                 delete userCredentials.exp
+                delete userCredentials.iat
                 const token = jwt.sign(userCredentials, config.app.secret_key, { expiresIn: '100m' });
                 const refreshToken = jwt.sign(userCredentials,config.app.secret_key,{expiresIn : '7d'})
                 const newRes = {
@@ -95,7 +96,16 @@ module.exports = {
             }
             
         } catch (error) {
-            return helper.response(response, 'fail',error, 200);
+            if(error.name === 'TokenExpiredError') {
+                const result = {
+                    msg : 'Token Expired!'
+                }
+              return helper.response(response, 'fail',result, 401);
+            } 
+            const result = {
+                msg : 'Invalid Token !'
+            }
+            return helper.response(response, 'fail', result, 401);
         }
     }
 }
