@@ -17,7 +17,6 @@ module.exports = {
             try {
               const decoded = jwt.verify(token, config.app.secret_key);
               request.decodedToken = decoded;
-              console.log(decoded)
               next();
             } catch (error) {
               if(error.name === 'TokenExpiredError') {

@@ -189,7 +189,8 @@ module.exports = {
     getDetails : async function (request,response) {
         const id = request.params.id
         try {
-            const result = await books.getDetails(id);
+            const result = await books.getDetails(id)
+            console.log(result)
             return helper.response(response,'success',result,200)
         } catch (error) {
             return helper.response(response,'fails',error,500)

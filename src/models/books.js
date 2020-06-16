@@ -85,7 +85,7 @@ module.exports = {
             connection.query("SELECT COUNT(*) as total FROM books",function(error,result) {
                 if (error) {
                     reject(error)
-                }         
+                }
                 resolve(result[0].total)       
             })
         })
@@ -95,8 +95,20 @@ module.exports = {
             connection.query("SELECT * FROM books WHERE id= ?",id,function(error,result) {
                 if (error) {
                     reject(error)
-                }       
-                resolve(result)       
+                }
+                else{
+                    if (result.length > 0) {
+                        const newRes = {
+                            data : result[0]
+                        }
+                        resolve(newRes)
+                    } else {
+                        const failedRes = {
+                            msg : "Data books not found!!"
+                        }
+                        resolve(failedRes)
+                    }
+                }   
             })
         })
     }

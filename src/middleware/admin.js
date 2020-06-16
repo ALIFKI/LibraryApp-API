@@ -16,7 +16,6 @@ module.exports = {
             try {
               const decoded = jwt.verify(token, config.app.secret_key);
               let user = decoded.data
-              console.log(user.role)
               if (user.role == 1) {
                   next()
               } else {
