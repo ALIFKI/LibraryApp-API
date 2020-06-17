@@ -46,7 +46,7 @@ module.exports = {
                     const User = {
                        data : result[0]
                     }
-                    const token = jwt.sign(User, config.app.secret_key, { expiresIn: '100m' });
+                    const token = jwt.sign(User, config.app.secret_key, { expiresIn: '1d' });
                     const refreshToken = jwt.sign(User,config.app.secret_key,{expiresIn : '7d'})
                     result[0].token = token;
                     result[0].refreshToken = refreshToken;
@@ -68,7 +68,6 @@ module.exports = {
                 return helper.response(response, 'fail', failedRes, 400);
             }
         } catch (error) {
-            console.log(error);
             return helper.response(response, 'fail', error.msg='Internet Server Error', 500);
         }
     },
@@ -78,7 +77,7 @@ module.exports = {
                 const userCredentials = jwt.verify(request.headers.refreshtoken, config.app.secret_key);
                 delete userCredentials.exp
                 delete userCredentials.iat
-                const token = jwt.sign(userCredentials, config.app.secret_key, { expiresIn: '100m' });
+                const token = jwt.sign(userCredentials, config.app.secret_key, { expiresIn: '1d' });
                 const refreshToken = jwt.sign(userCredentials,config.app.secret_key,{expiresIn : '7d'})
                 const newRes = {
                     msg : "Refresh Success!",

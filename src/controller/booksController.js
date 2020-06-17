@@ -154,7 +154,7 @@ module.exports = {
         try {
             const get = await books.getDetails(id)
             const data = {
-                ...get[0]
+                ...get.data
             }
             fs.delete('uploads/'+data.image)
             const result = await books.destroy(id)
@@ -175,7 +175,7 @@ module.exports = {
             if(request.file){
                 const get = await books.getDetails(id)
                 const data = {
-                    ...get[0]
+                    ...get.data
                 }
                 fs.delete('uploads/'+data.image)
             }
@@ -190,7 +190,6 @@ module.exports = {
         const id = request.params.id
         try {
             const result = await books.getDetails(id)
-            console.log(result)
             return helper.response(response,'success',result,200)
         } catch (error) {
             return helper.response(response,'fails',error,500)

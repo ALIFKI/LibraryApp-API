@@ -7,7 +7,8 @@ const config = {
     },
     app : {
         port : process.env.PORT,
-        secret_key : process.env.SERCERT_KEY
+        secret_key : process.env.SERCERT_KEY,
+        refresh_secret  : process.env.refresh
     }
 
 }
