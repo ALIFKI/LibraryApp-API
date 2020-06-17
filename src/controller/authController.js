@@ -36,18 +36,19 @@ module.exports = {
     },
     login : async function(request,response){
         const credentials = request.body
-        const result = await auth.login(credentials.email)
         try {
+            const result = await auth.login(credentials.email)
             if (result.length > 0) {
                 const pass = result[0].password;
                 const bypass = HasPass.compareSync(credentials.password,pass)
+                console.log(bypass)
                 if (bypass) {
                     delete result[0].password
                     const User = {
                        data : result[0]
                     }
-                    const token = jwt.sign(User, config.app.secret_key, { expiresIn: '1d' });
-                    const refreshToken = jwt.sign(User,config.app.secret_key,{expiresIn : '7d'})
+                    const token = jwt.sign(User, config.app.secret_key, { expiresIn: '3d' });
+                    const refreshToken = jwt.sign(User,config.app.refresh_secret,{expiresIn : '7d'})
                     result[0].token = token;
                     result[0].refreshToken = refreshToken;
                     const newRes = {
@@ -74,11 +75,11 @@ module.exports = {
     refreshToken : async function (request,response) {
         try {
             if (request.headers.refreshtoken) {
-                const userCredentials = jwt.verify(request.headers.refreshtoken, config.app.secret_key);
+                const userCredentials = jwt.verify(request.headers.refreshtoken, config.app.refresh_secret);
                 delete userCredentials.exp
                 delete userCredentials.iat
                 const token = jwt.sign(userCredentials, config.app.secret_key, { expiresIn: '1d' });
-                const refreshToken = jwt.sign(userCredentials,config.app.secret_key,{expiresIn : '7d'})
+                const refreshToken = jwt.sign(userCredentials,config.app.refresh_secret,{expiresIn : '7d'})
                 const newRes = {
                     msg : "Refresh Success!",
                     data : {

@@ -48,7 +48,6 @@ const getPrevLink = (_page,_totalPage,_current)=>{
         
     }
 }
-
 const goFirstLink = (_page,_totalPage,_current)=>{
     var page = parseInt(_page)
     if (page > 1 ) {
@@ -90,17 +89,12 @@ const booksSchema = Joi.object({
 
 const booksSchemaUpdate = Joi.object({
     image : Joi.string(),
-    title : Joi.string()
-    .required(),
-    description : Joi.string()
-            .required(),
-    id_author : Joi.number()
-        .required(),
-    id_genre : Joi.number()
-        .required(),
-    status : Joi.string()
-    .required(),
-    updated_at : Joi.date().required()
+    title : Joi.string(),
+    description : Joi.string(),
+    id_author : Joi.number(),
+    id_genre : Joi.number(),
+    status : Joi.string(),
+    updated_at : Joi.date()
 })
 
 module.exports = {

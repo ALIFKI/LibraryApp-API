@@ -73,9 +73,9 @@ const goLastPage = (_page,_totalPage,_current)=>{
 }
 
 const authorSchema = Joi.object({
-    author_name : Joi.string()
-                .alphanum()
-                .required()
+    author : Joi.string()
+                .required(),
+    updated_at : Joi.date()
 })
 
 module.exports = {

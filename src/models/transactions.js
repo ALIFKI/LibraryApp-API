@@ -68,5 +68,45 @@ module.exports = {
             })
         })
         
-    }
+    },
+    index : function(startAt,endAt,rule) {
+        return new Promise((resolve,reject)=>{
+            connection.query(`SELECT transactions.id,users.name,books.title,transactions.periode_of_time,transactions.borrowing_date,transactions.return_date,transactions.created_at,transactions.updated_at FROM transactions INNER JOIN books ON books.id = transactions.id_books INNER JOIN users ON users.id = transactions.id_users WHERE ${rule.by} LIKE ? ORDER BY ${rule.order} ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,['%'+rule.search+'%',endAt,startAt],function (error,result) {
+                if (error) {
+                    reject(error)
+                }
+                const resData = {
+                    msg : "List transactions",
+                    data : result
+                }
+                resolve(resData)
+            })
+        })
+    },
+    getCount : function () {
+        return new Promise((resolve,reject)=>{
+            connection.query("SELECT COUNT(*) as total FROM transactions",function(error,result) {
+                if (error) {
+                    reject(error)
+                }
+                resolve(result[0].total)       
+            })
+        })
+    },
+    destroy : function (id) {
+        return new Promise((resolve,reject)=>{
+            connection.query("DELETE FROM transactions WHERE id=?",id,function(error,result) {
+                if (error) {
+                    reject(error)
+                }
+                if (result.affectedRows <= 0) {
+                    resolve(result)
+                }
+                const newRes = {
+                    msg : "Delete Success!"
+                }
+                resolve(newRes)
+            })
+        })
+    },
 }

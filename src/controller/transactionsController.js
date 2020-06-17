@@ -3,11 +3,76 @@ const Joi = require('@hapi/joi');
 const HasPass = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const config = require('../config/global')
-const secretPas = require('../helpers/bcrypt')
 const tokenList = {}
 const transactions = require('../models/transactions');
 const books = require('../models/books')
 const moment = require('moment');
+const queryString = require('querystring')
+
+const getPage = (_page) =>{
+    var page = parseInt(_page)
+    if (page && page > 0) {
+        return page
+    } else {
+        return 1
+    }
+}
+const getPerPage = (_limit) =>{
+    const limit = parseInt(_limit)
+    if (limit && limit >0) {
+        return limit
+    } else {
+        return 5
+    }
+
+}
+const getNextLink = (_page, _totalPage, _current) => {
+    page = parseInt(_page)
+    if (page < _totalPage) {
+      const generatedPage = {
+        page : page + 1
+      }
+      return queryString.stringify({ ..._current, ...generatedPage })
+    } else {
+
+    }
+}
+
+const getPrevLink = (_page,_totalPage,_current)=>{
+    var page = parseInt(_page)
+    if (page > 1 ) {
+        const generatedPage = {
+            page : page - 1
+        }
+        return queryString.stringify({..._current,...generatedPage})
+    } else {
+        
+    }
+}
+
+const goFirstLink = (_page,_totalPage,_current)=>{
+    var page = parseInt(_page)
+    if (page > 1 ) {
+        const generatedPage = {
+            page : 1
+        }
+        return queryString.stringify({..._current,...generatedPage})
+    } else {
+        
+    }
+}
+
+const goLastPage = (_page,_totalPage,_current)=>{
+    var page = parseInt(_page)
+    if (page < _totalPage ) {
+        const generatedPage = {
+            page : _totalPage
+        }
+        return queryString.stringify({..._current,...generatedPage})
+    } else {
+        
+    }
+}
 
 module.exports = {
     postTransaction : async function (request,response) {
@@ -48,7 +113,7 @@ module.exports = {
         console.log(setData)
         try {
             const transaction = await transactions.getDetails(id)
-            const IsExistBook = await books.getDetails(transaction.id_book)
+            const IsExistBook = await books.getDetails(transaction.id_books)
             if (IsExistBook.msg == 'Data books not found!!') {
                 return helper.response(response,'false',IsExistBook,500)
             } else {
@@ -57,7 +122,7 @@ module.exports = {
                         status : 'Available'
                     }
                     const result = await transactions.editTransaksi(setData,id)
-                    const book = await transactions.editBook(status,transaction.id_book)
+                    const book = await transactions.editBook(status,transaction.id_books)
                     return helper.response(response,'success',result,200)
                 } else {
                     const newRes = {
@@ -68,6 +133,48 @@ module.exports = {
             }
         } catch (error) {
             return helper.response(response,'fail',error,500)
+        }
+    },
+    getAllTransactions : async function (request,response) {
+        try {
+                const query = request.query;
+                const rule = {
+                    search : query.search,
+                    sort   : query.sort,
+                    by : query.by,
+                    order : query.order
+                }
+                const totalPage = Math.ceil(await transactions.getCount()/getPage(query.limit))
+                const current_page = query.page
+                const startAt = (getPage(query.page) * getPerPage(query.limit)) - getPerPage(query.limit);
+                const endAt = parseInt(query.limit)
+                const nextLink = getNextLink(query.page,totalPage,query)
+                const prevLink = getPrevLink(query.page,totalPage,query)
+                const first_page = goFirstLink(query.page,totalPage,query)
+                const last_page  = goLastPage(query.page,totalPage,query)
+        
+                const result = await transactions.index(startAt,endAt,rule)
+                    result.msg = 'List Transactions';
+                    result.pageInfo = {
+                        nextLink : nextLink && `/api/transactions?${nextLink}`,
+                        prevLink : prevLink && `/api/transactions?${prevLink}`,
+                        current_page : current_page,
+                        firstPage : first_page && `/api/transactions?${first_page}`,
+                        lastPage : last_page && `/api/transactions?${last_page}`,
+                    }
+                return helper.response(response,'success',result,200)
+        } catch (error) {
+            return helper.response(response,'fail',error,200)
+        }
+    },
+    deleteTransaction : async function (request,response) {
+        const id = request.params.id
+        try {
+            const result = await transactions.destroy(id)
+            return helper.response(response,'success',result,200)
+        } catch (error) {
+            return helper.response(response,'fail',error,200)
+            
         }
     }
 }
