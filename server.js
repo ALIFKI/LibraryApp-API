@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const routes = require('./src/routes/index')
 const session = require('express-session')
 const cors = require("cors")
-var whitelist = ['http://example2.com','http://localhost:8100','*','http://localhost:3000']
+var whitelist = ['http://example2.com','http://localhost:8001','*','http://localhost:3000']
 var corsOptions = {
   origin: function (origin, callback) {
     if(!origin) return callback(null, true);

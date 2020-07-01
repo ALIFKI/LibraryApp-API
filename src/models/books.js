@@ -68,7 +68,7 @@ module.exports = {
     
     indexSearch : function(startAt,endAt,rule) {
         return new Promise((resolve,reject)=>{
-            connection.query(`SELECT books.id,books.title,books.description,books.image,books.status,genres.genre as genre,authors.author as author,books.created_at,books.updated_at FROM books INNER JOIN genres ON genres.id_genre = books.id_genre INNER JOIN authors ON authors.id_author = books.id_author WHERE ${rule.by} LIKE ? ORDER BY ${rule.order} ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ? `,['%'+rule.search+'%',endAt,startAt],function (error,result) {
+            connection.query(`SELECT books.id,books.title,books.description,books.image,books.status,genres.genre as genre,genres.id_genre,authors.author as author,authors.id_author,books.created_at,books.updated_at FROM books INNER JOIN genres ON genres.id_genre = books.id_genre INNER JOIN authors ON authors.id_author = books.id_author WHERE ${rule.by} LIKE ? ORDER BY ${rule.order} ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ? `,['%'+rule.search+'%',endAt,startAt],function (error,result) {
                 if (error) {
                     reject(error)
                 }
@@ -92,7 +92,7 @@ module.exports = {
     },
     getDetails : function (id) {
         return new Promise((resolve,reject)=>{
-            connection.query("SELECT * FROM books WHERE id= ?",id,function(error,result) {
+            connection.query("SELECT books.id,books.title,books.description,books.image,books.status,genres.genre as genre,genres.id_genre,authors.author as author,authors.id_author,books.created_at,books.updated_at FROM books INNER JOIN genres ON genres.id_genre = books.id_genre INNER JOIN authors ON authors.id_author = books.id_author WHERE id= ?",id,function(error,result) {
                 if (error) {
                     reject(error)
                 }

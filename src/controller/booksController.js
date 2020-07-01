@@ -122,6 +122,7 @@ module.exports = {
                         nextLink : nextLink && `/api/books?${nextLink}`,
                         prevLink : prevLink && `/api/books?${prevLink}`,
                         current_page : current_page,
+                        total_page : totalPage,
                         firstPage : first_page && `/api/books?${first_page}`,
                         lastPage : last_page && `/api/books?${last_page}`,
                     }

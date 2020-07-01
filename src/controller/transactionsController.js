@@ -79,8 +79,8 @@ module.exports = {
         const userCredentials = jwt.verify(request.headers.authorization, config.app.secret_key);
         const setData = request.body
         setData.borrowing_date = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-        setData.id_user = userCredentials.data.id
-        setData.id_book = request.params.id
+        setData.id_users = userCredentials.data.id
+        setData.id_books = request.params.id
         try {
             const IsExistBook = await books.getDetails(request.params.id)
             if (IsExistBook.msg == 'Data books not found!!') {
@@ -95,7 +95,7 @@ module.exports = {
                     const status = {
                         status :  "Borrowed"
                     }
-                    const booksBorrow = await transactions.editBook(status,setData.id_book)
+                    const booksBorrow = await transactions.editBook(status,setData.id_books)
                     const result = await transactions.store(setData)
                     return helper.response(response,'success',result,200)
                 }
