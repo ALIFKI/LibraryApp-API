@@ -176,5 +176,40 @@ module.exports = {
             return helper.response(response,'fail',error,200)
             
         }
-    }
+    },
+    getUserHistory : async function (request,response) {
+        try {
+            // console.log(request.body.id)
+                const id = request.body.id
+                const query = request.query;
+                const rule = {
+                    search : query.search,
+                    sort   : query.sort,
+                    by : query.by,
+                    order : query.order
+                }
+                const totalPage = Math.ceil(await transactions.getCount()/getPage(query.limit))
+                const current_page = query.page
+                const startAt = (getPage(query.page) * getPerPage(query.limit)) - getPerPage(query.limit);
+                const endAt = parseInt(query.limit)
+                const nextLink = getNextLink(query.page,totalPage,query)
+                const prevLink = getPrevLink(query.page,totalPage,query)
+                const first_page = goFirstLink(query.page,totalPage,query)
+                const last_page  = goLastPage(query.page,totalPage,query)
+        
+                const result = await transactions.indexUser(startAt,endAt,rule,id)
+                    result.msg = 'List Transactions';
+                    result.pageInfo = {
+                        nextLink : nextLink && `/api/transactions?${nextLink}`,
+                        prevLink : prevLink && `/api/transactions?${prevLink}`,
+                        current_page : current_page,
+                        firstPage : first_page && `/api/transactions?${first_page}`,
+                        lastPage : last_page && `/api/transactions?${last_page}`,
+                    }
+                return helper.response(response,'success',result,200)
+        } catch (error) {
+            // console.log(error)
+            return helper.response(response,'fail',error,500)
+        }
+    },
 }

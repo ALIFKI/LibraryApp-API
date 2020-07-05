@@ -109,4 +109,19 @@ module.exports = {
             })
         })
     },
+    indexUser : function(startAt,endAt,rule,id) {
+        return new Promise((resolve,reject)=>{
+            connection.query(`SELECT transactions.id,transactions.id_users,users.name,books.title,transactions.periode_of_time,transactions.borrowing_date,transactions.return_date,transactions.created_at,transactions.updated_at FROM transactions INNER JOIN books ON books.id = transactions.id_books INNER JOIN users ON users.id = transactions.id_users WHERE id_users =${18} ORDER BY ${rule.order} ${parseInt(rule.sort) ? 'DESC' : 'ASC'} LIMIT ? OFFSET ?`,[endAt,startAt],function (error,result) {
+                if (error) {
+                    reject(error)
+                }
+                const resData = {
+                    msg : "List transactions",
+                    data : result
+                }
+                console.log(result)
+                resolve(resData)
+            })
+        })
+    },
 }
