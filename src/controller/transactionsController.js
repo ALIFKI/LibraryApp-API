@@ -179,8 +179,8 @@ module.exports = {
     },
     getUserHistory : async function (request,response) {
         try {
-            // console.log(request.body.id)
-                const id = request.body.id
+            const userCredentials = jwt.verify(request.headers.authorization, config.app.secret_key);
+                const id = userCredentials.data.id
                 const query = request.query;
                 const rule = {
                     search : query.search,
